@@ -66,6 +66,7 @@ GEM
     ffi (1.13.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    httpclient (2.8.3)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     jbuilder (2.10.1)
@@ -139,6 +140,10 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    telegram-bot (0.14.4)
+      actionpack (>= 4.0, < 6.1)
+      activesupport (>= 4.0, < 6.1)
+      httpclient (~> 2.7)
     thor (1.0.1)
     thread_safe (0.3.6)
     tzinfo (1.2.7)
@@ -160,6 +165,7 @@ DEPENDENCIES
   rails (~> 6.0.3, >= 6.0.3.4)
   spring
   spring-watcher-listen (~> 2.0.0)
+  telegram-bot
   tzinfo-data
 
 RUBY VERSION
