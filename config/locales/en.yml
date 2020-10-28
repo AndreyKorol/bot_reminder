@@ -1,2 +1,4 @@
 en:
-  start: "Hello, give me your name!"
+  start: Hi, what's your name?
+  email: To complete your register we need your email.
+  registration_completed: Thanks, now you are able to add events. To add event type /event and follow instruction. To list your active events type /events, if you want to list all events including past type /events all.
