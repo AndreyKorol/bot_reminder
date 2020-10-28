@@ -17,11 +17,13 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
       user = User.first
       expect(user.email).to eq('email@example.com')
       expect(user.name).to eq('Andrey')
+      expect(user.chat_id).to be_present
     end
   end
 
   describe '#event!' do
     subject { -> { dispatch_command :event } }
+
     it do
       should respond_with_message 'Type name for event.'
 
@@ -35,12 +37,36 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
         .with(hash_including(text: 'Thanks, we will notify you one hour before the start'))
 
       event = Event.first
-      expect(event.name).to eq(name)
-      expect(event.date).to eq(date)
-      expect(event.description).to eq(description)
+      expect(event.name).to eq('Event')
+      expect(event.date).to eq(DateTime.new('09-11 13:15'))
+      expect(event.description).to eq('My first event')
     end
   end
+
   describe '#events!' do
     subject { -> { dispatch_command :events } }
+    before do
+      user = create(:user)
+      create(:event, user: user, name: 'Past Event', date: DateTime.now - 1.hour)
+      create(:event, user: user, name: 'First Event')
+      create(:event, user: user, name: 'Second Event')
+    end
+
+    it '/events' do
+      events = [
+        "First Event - 28.10 00:00 - default description",
+        "Second Event - 28.10 00:00 - default description"
+      ]
+      should respond_with_message events.join("\n")
+    end
+
+    it '/events all' do
+      events = [
+        "Past Event - 27.10 23:00 - default description",
+        "First Event - 28.10 00:00 - default description",
+        "Second Event - 28.10 00:00 - default description"
+      ]
+      should respond_with_message events.join("\n")
+    end
   end
 end

@@ -8,10 +8,6 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: t('start')
   end
 
-  def message(name)
-    binding.pry
-  end
-
   def name(name)
     save_context :email
     session[:name] = name
@@ -19,7 +15,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def email(email)
-    User.create(name: session[:name], email: email)
+    User.create(name: session[:name], email: email, chat_id: chat['id'])
     respond_with :message, text: t('registration_completed')
   end
 
