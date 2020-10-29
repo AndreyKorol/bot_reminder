@@ -12,6 +12,9 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
         .with(hash_including(text: "To complete your register we need your email."))
 
       expect { dispatch_message('email@example.com') }.to make_telegram_request(bot, :sendMessage)
+        .with(hash_including(text: "Paste code that we sent to email"))
+
+      expect { dispatch_message(controller.send(:session)[:code]) }.to make_telegram_request(bot, :sendMessage)
         .with(hash_including(text: "Thanks, now you are able to add events. To add event type /event and follow instruction. To list your active events type /events, if you want to list all events including past type /events all."))
 
       user = User.first
