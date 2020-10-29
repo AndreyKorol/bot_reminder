@@ -1,11 +1,15 @@
 en:
-  start: Hi, what's your name?
-  email: To complete your register we need your email.
-  registration_completed: Thanks, now you are able to add events. To add event type /event and follow instructions. To list your active events type /events, if you want to list all events including past type /events all.
-  already_registered: You are already registered.
-  wrong_code: Wrong code. Try again.
-  approve_email: Paste code that we sent to email
-  incorrect_email: It doesn't look like email. Try again.
+  wrong_input: It seems you type incorrect data
+  event_string: "There is events that start soon:\n%{event}"
+
+  user:
+    start: Hi, what's your name?
+    email: To complete your register we need your email.
+    registration_completed: Thanks, now you are able to add events. To add event type /event and follow instructions. To list your active events type /events, if you want to list all events including past type /events all.
+    already_registered: You are already registered.
+    wrong_code: Wrong code. Try again.
+    approve_email: Paste code that we sent to email
+    incorrect_email: It doesn't look like email. Try again.
 
   event:
     name: Type name for event.
@@ -13,3 +17,6 @@ en:
     description: Type the description of event.
     complete: Thanks, we will notify you one hour before the start
     register_first: To get possibility add events you need register first, type /start and follow instructions.
+
+  events:
+    no_active_events: You have no active events

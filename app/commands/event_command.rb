@@ -20,13 +20,19 @@ module EventCommand
     hours, minutes = date_and_time.second.split(':').map(&:to_i)
     session[:datetime] = DateTime.new(2020, month, day, hours, minutes, 0, '+3')
     respond_with :message, text: t('event.description')
+  rescue
+    save_context :event_datetime
+    respond_with :message, text: t('wrong_input')
   end
 
   def event_description(*)
-    Event.create(name: session[:name],
-                 date: session[:datetime],
-                 description: update.dig('message', 'text'),
-                 user: User.find_by(chat_id: chat['id']))
+    event = Event.create(name: session[:name],
+                         date: session[:datetime],
+                         description: update.dig('message', 'text'),
+                         user: User.find_by(chat_id: chat['id']))
+    if session[:datetime] > DateTime.now + 1.hour + 1.minute
+      ::EventNotificationJob.set(wait_until: session[:datetime] - 1.hour).perform_later(event.id, chat['id'])
+    end
     respond_with :message, text: t('event.complete')
   end
 end

@@ -1,17 +1,17 @@
 module StartCommand
   def start!(*)
     if registered?
-      respond_with :message, text: t('already_registered')
+      respond_with :message, text: t('user.already_registered')
     else
       save_context :name
-      respond_with :message, text: t('start')
+      respond_with :message, text: t('user.start')
     end
   end
 
   def name(name)
     save_context :email
     session[:name] = name
-    respond_with :message, text: t('email')
+    respond_with :message, text: t('user.email')
   end
 
   def email(email)
@@ -21,10 +21,10 @@ module StartCommand
       session[:code] = code
       session[:email] = email
       ApproveEmailMailer.send_mail(email, code).deliver_now
-      respond_with :message, text: t('approve_email')
+      respond_with :message, text: t('user.approve_email')
     else
       save_context :email
-      respond_with :message, text: t('incorrect_email')
+      respond_with :message, text: t('user.incorrect_email')
     end
   end
 
@@ -33,14 +33,10 @@ module StartCommand
     if code == session[:code]
       session[:code] = nil
       User.where(email: session[:email]).first_or_create(attributes).update(attributes)
-      respond_with :message, text: t('registration_completed')
+      respond_with :message, text: t('user.registration_completed')
     else
       save_context :code
-      respond_with :message, text: t('wrong_code')
+      respond_with :message, text: t('user.wrong_code')
     end
-  end
-
-  def registered?
-    User.where(chat_id: chat['id']).exists?
   end
 end

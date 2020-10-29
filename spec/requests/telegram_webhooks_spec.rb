@@ -34,7 +34,7 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
       expect { dispatch_message('Event') }.to make_telegram_request(bot, :sendMessage)
         .with(hash_including(text: 'Type date and time in format: day.month hours:minutes. For example 29.10 13:15 (Thu, 29 Oct 2020 13:15)'))
 
-      expect { dispatch_message('29.10 13:15') }.to make_telegram_request(bot, :sendMessage)
+      expect { dispatch_message("29.10 13:15") }.to make_telegram_request(bot, :sendMessage)
         .with(hash_including(text: 'Type the description of event.'))
 
       expect { dispatch_message('My first event') }.to make_telegram_request(bot, :sendMessage)

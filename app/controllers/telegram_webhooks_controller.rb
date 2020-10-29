@@ -7,6 +7,10 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include EventCommand
   include EventsCommand
 
+  def registered?
+    User.where(chat_id: chat['id']).exists?
+  end
+
   def session_key
     chat['id']
   end
