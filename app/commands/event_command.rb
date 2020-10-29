@@ -16,7 +16,9 @@ module EventCommand
 
   def event_datetime(*date_and_time)
     save_context :event_description
-    session[:datetime] = DateTime.parse("#{date_and_time.join(' ')}+3:00") - 11.seconds
+    day, month = date_and_time.first.split('.').map(&:to_i)
+    hours, minutes = date_and_time.second.split(':').map(&:to_i)
+    session[:datetime] = DateTime.new(2020, month, day, hours, minutes, 0, '+3')
     respond_with :message, text: t('event.description')
   end
 

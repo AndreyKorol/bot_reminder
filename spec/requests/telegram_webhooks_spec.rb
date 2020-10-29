@@ -32,9 +32,9 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
       should respond_with_message 'Type name for event.'
 
       expect { dispatch_message('Event') }.to make_telegram_request(bot, :sendMessage)
-        .with(hash_including(text: 'Type date and time in format: month.day hours:minutes. For example 11.09 13:15 (Thu, 29 Oct 2020 13:15)'))
+        .with(hash_including(text: 'Type date and time in format: day.month hours:minutes. For example 29.10 13:15 (Thu, 29 Oct 2020 13:15)'))
 
-      expect { dispatch_message('11.09 13:15') }.to make_telegram_request(bot, :sendMessage)
+      expect { dispatch_message('29.10 13:15') }.to make_telegram_request(bot, :sendMessage)
         .with(hash_including(text: 'Type the description of event.'))
 
       expect { dispatch_message('My first event') }.to make_telegram_request(bot, :sendMessage)
@@ -48,29 +48,36 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
   end
 
   describe '#events!' do
-    subject { -> { dispatch_command :events } }
     before do
       user = create(:user)
-      create(:event, user: user, name: 'Past Event', date: DateTime.now - 1.hour)
-      create(:event, user: user, name: 'First Event')
-      create(:event, user: user, name: 'Second Event')
+      create(:event, user: user, name: 'Past Event', date: DateTime.new(2020, 9, 10, 13, 15, 0, '+3'))
+      create(:event, user: user, name: 'First Event', date: DateTime.new(2020, 11, 10, 13, 15, 0, '+3'))
+      create(:event, user: user, name: 'Second Event', date: DateTime.new(2020, 12, 10, 13, 15, 0, '+3'))
     end
 
-    it '/events' do
-      events = [
-        "First Event - 28.10 00:00 - default description",
-        "Second Event - 28.10 00:00 - default description"
-      ]
-      should respond_with_message events.join("\n")
+    context '/events' do
+      subject { -> { dispatch_command :events } }
+
+      it do
+        text = [
+          "First Event - Tue, 10 Nov 2020 13:15 - default description",
+          "Second Event - Thu, 10 Dec 2020 13:15 - default description"
+        ].join("\n")
+        should respond_with_message text
+      end
     end
 
-    it '/events all' do
-      events = [
-        "Past Event - 27.10 23:00 - default description",
-        "First Event - 28.10 00:00 - default description",
-        "Second Event - 28.10 00:00 - default description"
-      ]
-      should respond_with_message events.join("\n")
+    context '/events all' do
+      subject { -> { dispatch_command :events, 'all' } }
+
+      it do
+        text = [
+          "Past Event - Thu, 10 Sep 2020 13:15 - default description",
+          "First Event - Tue, 10 Nov 2020 13:15 - default description",
+          "Second Event - Thu, 10 Dec 2020 13:15 - default description"
+        ].join("\n")
+        should respond_with_message text
+      end
     end
   end
 end

@@ -5,6 +5,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
   include StartCommand
   include EventCommand
+  include EventsCommand
 
   def session_key
     chat['id']
