@@ -1,4 +1,4 @@
-module Start
+module StartCommand
   def start!(*)
     if registered?
       respond_with :message, text: t('already_registered')

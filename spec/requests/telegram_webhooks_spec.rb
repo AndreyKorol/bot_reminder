@@ -15,7 +15,7 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
         .with(hash_including(text: "Paste code that we sent to email"))
 
       expect { dispatch_message(controller.send(:session)[:code]) }.to make_telegram_request(bot, :sendMessage)
-        .with(hash_including(text: "Thanks, now you are able to add events. To add event type /event and follow instruction. To list your active events type /events, if you want to list all events including past type /events all."))
+        .with(hash_including(text: "Thanks, now you are able to add events. To add event type /event and follow instructions. To list your active events type /events, if you want to list all events including past type /events all."))
 
       user = User.first
       expect(user.email).to eq('email@example.com')
@@ -26,14 +26,15 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
 
   describe '#event!' do
     subject { -> { dispatch_command :event } }
+    before { create(:user) }
 
     it do
       should respond_with_message 'Type name for event.'
 
       expect { dispatch_message('Event') }.to make_telegram_request(bot, :sendMessage)
-        .with(hash_including(text: 'Type date and time in format: dd.mm hh:mm. For example 09.11 13:15'))
+        .with(hash_including(text: 'Type date and time in format: month.day hours:minutes. For example 11.09 13:15 (Thu, 29 Oct 2020 13:15)'))
 
-      expect { dispatch_message('09.11 13:15') }.to make_telegram_request(bot, :sendMessage)
+      expect { dispatch_message('11.09 13:15') }.to make_telegram_request(bot, :sendMessage)
         .with(hash_including(text: 'Type the description of event.'))
 
       expect { dispatch_message('My first event') }.to make_telegram_request(bot, :sendMessage)
@@ -41,7 +42,7 @@ RSpec.describe TelegramWebhooksController, type: :telegram_bot_controller do
 
       event = Event.first
       expect(event.name).to eq('Event')
-      expect(event.date).to eq(DateTime.new('09-11 13:15'))
+      expect(event.date.in_time_zone('Minsk').strftime('%a, %d %b %Y %R')).to eq('Thu, 29 Oct 2020 13:15')
       expect(event.description).to eq('My first event')
     end
   end
